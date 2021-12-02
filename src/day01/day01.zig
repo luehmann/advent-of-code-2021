@@ -4,7 +4,6 @@ const example_input = @embedFile("./example_input.txt");
 const puzzle_input = @embedFile("./puzzle_input.txt");
 
 pub fn main() void {
-    std.debug.print("Hello World\n", .{});
     std.debug.print("--- Part One ---\n", .{});
     std.debug.print("Result: {d}\n", .{part1(puzzle_input)});
     std.debug.print("--- Part Two ---\n", .{});
