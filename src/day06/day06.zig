@@ -5,42 +5,12 @@ const puzzle_input = @embedFile("./puzzle_input.txt");
 
 pub fn main() !void {
     std.debug.print("--- Part One ---\n", .{});
-    std.debug.print("Result: {d}\n", .{try part1(std.testing.allocator, puzzle_input)});
+    std.debug.print("Result: {d}\n", .{solve(puzzle_input, 80)});
     std.debug.print("--- Part Two ---\n", .{});
-    std.debug.print("Result: {d}\n", .{part2(puzzle_input)});
+    std.debug.print("Result: {d}\n", .{solve(puzzle_input, 256)});
 }
 
-fn part1(allocator: std.mem.Allocator, input: []const u8) !usize {
-    var numbers = std.mem.split(u8, input, ",");
-    var lanternfish = std.ArrayList(usize).init(allocator);
-    defer lanternfish.deinit();
-    while (numbers.next()) |number| {
-        try lanternfish.append(std.fmt.parseInt(usize, number, 10) catch unreachable);
-    }
-    var day: usize = 0;
-    while (day < 80) {
-        day += 1;
-        for (lanternfish.items) |*age| {
-            if (age.* == 0) {
-                age.* = 6;
-                try lanternfish.append(8);
-            } else {
-                age.* -= 1;
-            }
-        }
-    }
-    return lanternfish.items.len;
-}
-
-test "day06 part1 - example input" {
-    try std.testing.expectEqual(@as(usize, 5_934), try part1(std.testing.allocator, example_input));
-}
-
-test "day06 part1 - puzzle input" {
-    try std.testing.expectEqual(@as(usize, 352_872), try part1(std.testing.allocator, puzzle_input));
-}
-
-fn part2(input: []const u8) usize {
+fn solve(input: []const u8, last_day: usize) usize {
     var numbers = std.mem.split(u8, input, ",");
     var replicates_in = [_]usize{0} ** 9;
     while (numbers.next()) |number| {
@@ -48,7 +18,7 @@ fn part2(input: []const u8) usize {
         replicates_in[n] += 1;
     }
     var day: usize = 0;
-    while (day < 256) {
+    while (day < last_day) {
         day += 1;
         const day_0_count = replicates_in[0];
         var i: usize = 0;
@@ -66,10 +36,18 @@ fn part2(input: []const u8) usize {
     return sum;
 }
 
+test "day06 part1 - example input" {
+    try std.testing.expectEqual(@as(usize, 5_934), solve(example_input, 80));
+}
+
+test "day06 part1 - puzzle input" {
+    try std.testing.expectEqual(@as(usize, 352_872), solve(puzzle_input, 80));
+}
+
 test "day06 part2 - example input" {
-    try std.testing.expectEqual(@as(usize, 26_984_457_539), part2(example_input));
+    try std.testing.expectEqual(@as(usize, 26_984_457_539), solve(example_input, 256));
 }
 
 test "day06 part2 - puzzle input" {
-    try std.testing.expectEqual(@as(usize, 1_604_361_182_149), part2(puzzle_input));
+    try std.testing.expectEqual(@as(usize, 1_604_361_182_149), solve(puzzle_input, 256));
 }
